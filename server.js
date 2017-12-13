@@ -1,33 +1,18 @@
-//!!!!!!!!!! module.exports = exports = this !!!!!!!!!!!
-// -----------	exports	-------------
+var http = require('http');
 
-var log = require('logger')(module);
-var db = require('db');
-db.connect();
+var server = new http.Server();
+//http.Server -> net.Server -> EventEmitter
 
-var User = require('./user');
+server.listen(1337, '127.0.0.1');
 
-function run() {
-	var vasya = new User("Вася");
-	var petya = new User("Петя");
+var counter = 0;
 
-	vasya.hello(petya);
+var emit = server.emit;
+server.emit = function (event) {
+	console.log(event);
+	emit.apply(server, arguments);
+};
 
-	log(db.getPhrase('Run successful'));
-}
-
-if(module.parent) {
-	exports.run = run;
-} else {
-	run();
-}
-
-// -----------	global	-------------
-/*
-require('./user');
-
-var vasya = new User("Вася");
-var petya = new User("Петя");
-
-vasya.hello(petya);
-*/
+server.on('request', function (req, res) {
+	res.end('Привет мир! ' + ++counter);
+});
