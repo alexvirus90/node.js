@@ -3,6 +3,7 @@
 var http = require('http');
 var url = require('url');
 
+/*
 var server = new http.Server(function (req, res) {
 
 	console.log( req.headers );
@@ -18,6 +19,7 @@ var server = new http.Server(function (req, res) {
 		res.statusCode = 404;
 		res.end("Page not found");
 	}
+	*/
 
 	/*
 	console.log(req.method, req.url);
@@ -32,6 +34,6 @@ var server = new http.Server(function (req, res) {
 		res.end("Page not found");
 	}
 	*/
-});
+// });
 
 server.listen(1337, '127.0.0.1');
