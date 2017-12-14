@@ -15,6 +15,7 @@ http.createServer(function (req, res) {
 
 			res.end(info);
 		});
+	} else { /*404*/ }
+});
 
-	}
-}).listen(3000);
+server.listen(3000);
