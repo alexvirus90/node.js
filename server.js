@@ -1,9 +1,20 @@
 var http = require('http');
-var log = require('./log')(module);
+var fs = require('fs');
 
-var server = http.createServer();
+http.createServer(function (req, res) {
+	var info;
 
-server.on('request', require('./request'));
-server.listen(1337);
+	if(req.url == '/'){
+		fs.readFile('index.html', function (err, info) {
+			if(err) {
+				console.error(err);
+				res.statusCode = 500;
+				res.end('На сервере произошла ошибка!');
+				return;
+			}
 
-log.debug("Server is running");
+			res.end(info);
+		});
+
+	}
+}).listen(3000);
