@@ -1,21 +1,40 @@
 var fs = require('fs');
+var http = require('http');
 
-// fs.ReadStream наследует от stream.Readable
-var stream = new fs.ReadStream("d.html");
+new http.Server(function (req, res) {
+	if (req.url == '/big.html'){
 
-stream.on('readable', function() {
-	var data = stream.read();
-	console.log(data.length);
-});
+		var file = new fs.ReadStream('big.html');
+		sendFile(file, res);
 
-stream.on('end', function() {
-	console.log("THE END");
-});
-
-stream.on('error', function(err) {
-	if (err.code == 'ENOENT') {
-		console.log("Файл не найден, попинайте админа, пусть выложит..");
-	} else {
-		console.error(err);
+		// fs.readFile('big.html', function (err, content) {
+		// 	if (err){
+		// 		res.statusCode = 500;
+		// 		res.end('Server error');
+		// 	} else {
+		// 		res.setHeader('Content-type', 'text/html; charset=utf-8');
+		// 		res.end(content);
+		// 	}
+		// });
 	}
-});
+}).listen(3000);
+
+function sendFile(file, res) {
+	file.on('readable', write);
+
+	function write() {
+		var fileContent = file.read();
+
+		if (fileContent && !res.write(fileContent)) {
+			file.removeListener('readable', write);
+
+			res.once('drain', function () {
+				file.on('readable', write);
+				write();
+			});
+		}
+	}
+	file.on('end', function () {
+		res.end();
+	})
+}
